@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Firebase Demo Page</title>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/firebasejs/3.6.0/firebase.js"></script>
+        <script type="text/javascript">
+        <!--
+            $(function() {
+                /**************************************************
+                /
+                / Initialize
+                /
+                /**************************************************/
+                var config = {
+                    apiKey: '*****'
+                    , authDomain: '*****'
+                    , databaseURL: '*****'
+                    , storageBucket: '*****'
+                    , messagingSenderId: '*****'
+                };
+                firebase.initializeApp(config);
+
+                /**************************************************
+                /
+                / Chat
+                /
+                /**************************************************/
+                var
+                    db_ref = firebase.database().ref('chat')
+                ;
+                $('#message').keypress(function(e) {
+                    if(e.keyCode == 13 && e.target.value.length > 0) {
+                        db_ref.push({
+                            uid: user_id
+                            , message: e.target.value
+                        });
+                        e.target.value = '';
+                    }
+                });
+
+                function output_chat_log(chat_log) {
+                    var
+                        uid = chat_log.uid
+                        , message = chat_log.message
+                    ;
+                    if(uid == user_id) {
+                        $('#chat_log').append('<li><p class="uid mine">' + uid + '</p><div class="clear"></div><p class="message mine">' + message + '</p><div class="clear"></div></li>');
+                    }
+                    else {
+                        $('#chat_log').append('<li><p class="uid">' + uid + '</p><div class="clear"></div><p class="message">' + message + '</p><div class="clear"></div></li>');
+                    }
+                    $('#chat_log').scrollTop($('#chat_log')[0].scrollHeight);
+                }
+
+                /**************************************************
+                /
+                / Authentication
+                /
+                /**************************************************/
+                var
+                    auth_ref = firebase.auth()
+                    , user_id = '*****'
+                ;
+                auth_ref.onAuthStateChanged(function(user) {
+                    if(user) {
+                        $('.login').show();
+                        $('.not_login').hide();
+
+                        user_id = user.uid;
+                        db_ref.on('child_added', function(snapshot) {
+                            output_chat_log(snapshot.val());
+                        });
+                    }
+                    else {
+                        $('.login').hide();
+                        $('.not_login').show();
+                        $('#chat_log').empty();
+                    }
+                });
+
+                $('#regist').click(function(e) {
+                    var
+                        email = $('#email').val()
+                        , password = $('#password').val()
+                    ;
+                    auth_ref.createUserWithEmailAndPassword(email, password).catch(function(err) {
+                        alert('登録エラー : ' + err);
+                    });
+                });
+
+                $('#login').click(function(e) {
+                    var
+                        email = $('#email').val()
+                        , password = $('#password').val()
+                    ;
+                    auth_ref.signInWithEmailAndPassword(email, password).catch(function(err) {
+                        alert('ログインエラー : ' + err);
+                    });
+                });
+
+                $('#logout').click(function(e) {
+                    auth_ref.signOut();
+                });
+            });
+        -->
+        </script>
+        <style type="text/css">
+        <!--
+            html, body {
+                width: 100%;
+                height: 98%;
+                margin: 0px;
+                padding 0px;
+            }
+            body {
+                font-family: arial, sans-serif;
+                font-size: 20px;
+                font-weight: bold;
+                color: #AAA;
+            }
+            ul {
+                margin: 0px;
+                padding: 0px;
+                list-style-type: none;
+            }
+            li {
+                margin: 0px;
+                padding: 0px;
+                text-align: left;
+            }
+            input {
+                margin: 0px;
+                padding: 5px 10px;
+            }
+            .text {
+                width: 50%;
+                border-radius: 15px;
+            }
+            .button {
+                width: 100px;
+                text-align: center;
+                border-radius: 15px;
+                transition: all 0.5s;
+            }
+            .button:hover {
+                color: #fff;
+                background-color: #0084ff;
+            }
+            #main {
+                width: 100%;
+                height: 100%;
+                margin: 0px auto;
+                padding: 0px;
+                text-align: center;
+            }
+            #email_area {
+                width: 100%;
+                margin: 10px auto 0px;
+                padding: 0px;
+            }
+            #password_area {
+                width: 100%;
+                margin: 10px auto 0px;
+                padding: 0px;
+            }
+            #button_area {
+                width: 100%;
+                margin: 10px auto 0px;
+                padding: 0px;
+            }
+            #chat_area {
+                width: 100%;
+                height: 90%;
+                margin: 10px auto 0px;
+                padding: 0px;
+            }
+            #message {
+            }
+            #chat_log {
+                height: 100%;
+                margin: 0px auto;
+                padding: 0px;
+                overflow-y: auto;
+            }
+            .uid {
+                font-size: 10px;
+                margin: 10px 10px 0px;
+                padding: 5px 10px;
+                word-wrap: break-word;
+            }
+            .message {
+                margin: 0px 10px 10px;
+                padding: 5px 10px;
+                border-radius: 15px;
+                word-wrap: break-word;
+            }
+            .uid.mine {
+                float: right;
+            }
+            .message.mine {
+                color: #fff;
+                background-color: #0084ff;
+                float: right;
+            }
+            .clear {
+                clear: both;
+            }
+            .login {
+                display: none;
+            }
+            .not_login {
+                display: none;
+            }
+        -->
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <div id="email_area" class="not_login">
+                <input id="email" class="text" type="email" placeholder="メールアドレスを入力" required />
+            </div>
+            <div id="password_area" class="not_login">
+                <input id="password" class="text" type="password" placeholder="パスワードを入力" required />
+            </div>
+            <div id="button_area">
+                <input id="regist" class="button not_login" type="button" value="新規登録" />
+                <input id="login" class="button not_login" type="button" value="ログイン" />
+                <input id="logout" class="button login" type="button" value="ログアウト" />
+            </div>
+            <div id="chat_area" class="login">
+                <input id="message" class="text" type="text" placeholder="メッセージを入力し、Enter で投稿" />
+                <ul id="chat_log"></ul>
+            </div>
+        </div>
+    </body>
+</html>

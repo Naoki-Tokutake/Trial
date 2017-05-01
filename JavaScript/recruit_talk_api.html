@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Recruit Talk API Demo Page</title>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script type="text/javascript">
+        <!--
+            $(function() {
+                /**************************************************
+                /
+                / Initialize
+                /
+                /**************************************************/
+                var config = {
+                    url : 'https://api.a3rt.recruit-tech.co.jp/talk/v1/smalltalk',
+                    apikey: '*****',
+                    callback: 'callback'
+                };
+
+                /**************************************************
+                /
+                / Chat
+                /
+                /**************************************************/
+                $('#message').keypress(function(e) {
+                    var
+                        message = e.target.value
+                    ;
+                    if(e.keyCode == 13 && e.target.value.length > 0) {
+                        $.ajax({
+                            url: config.url,
+                            type: 'POST',
+                            data: {
+                                apikey: config.apikey,
+                                query: message
+                            }
+                        }).done(function(data){
+                            output_chat_log(message, true);
+                            if(data.status == 0) {
+                                output_chat_log(data.results[0].reply);
+                            }
+                            else {
+                                console.log(data);
+                                output_chat_log('・・・');
+                            }
+                        }).fail(function(data){
+                            console.log(data);
+                        });
+                        e.target.value = '';
+                    }
+                });
+
+                function output_chat_log(message, mine=false) {
+                    $('#chat_log').append('<li><p class="' + (mine ? 'message mine' : 'message') + '">' + message + '</p><div class="clear"></div></li>');
+                    $('#chat_log').scrollTop($('#chat_log')[0].scrollHeight);
+                }
+
+                function callback(json) {
+                }
+            });
+        -->
+        </script>
+        <style type="text/css">
+        <!--
+            html, body {
+                width: 100%;
+                height: 98%;
+                margin: 0px;
+                padding 0px;
+            }
+            body {
+                font-family: arial, sans-serif;
+                font-size: 20px;
+                font-weight: bold;
+                color: #AAA;
+            }
+            ul {
+                margin: 0px;
+                padding: 0px;
+                list-style-type: none;
+            }
+            li {
+                margin: 0px;
+                padding: 0px;
+                text-align: left;
+            }
+            input {
+                margin: 0px;
+                padding: 5px 10px;
+            }
+            .text {
+                width: 50%;
+                border-radius: 15px;
+            }
+            #main {
+                width: 100%;
+                height: 100%;
+                margin: 0px auto;
+                padding: 0px;
+                text-align: center;
+            }
+            #chat_area {
+                width: 100%;
+                height: 100%;
+                margin: 10px auto;
+                padding: 0px;
+            }
+            #message {
+            }
+            #chat_log {
+                height: 90%;
+                margin: 10px auto;
+                padding: 0px;
+                overflow-y: auto;
+            }
+            .message {
+                margin: 0px 10px 10px;
+                padding: 5px 10px;
+                border-radius: 15px;
+                word-wrap: break-word;
+            }
+            .message.mine {
+                color: #fff;
+                background-color: #0084ff;
+                float: right;
+            }
+            .clear {
+                clear: both;
+            }
+        -->
+        </style>
+    </head>
+    <body>
+        <div id="main">
+            <div id="chat_area">
+                <input id="message" class="text" type="text" placeholder="メッセージを入力し、Enter で話しかける" />
+                <ul id="chat_log"></ul>
+            </div>
+        </div>
+    </body>
+</html>
